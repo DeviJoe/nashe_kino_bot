@@ -70,6 +70,7 @@ async def profile_data(msg: types.Message):
 Компания №{team}
 Счет компании: {score} кадриков
         '''
+        kb = keyboards.main_keyboard()
     else:
         ans = f'''
 *======== PROFILE ========\n*
@@ -77,7 +78,8 @@ async def profile_data(msg: types.Message):
 Ваш TELEGRAM ID: {username}
 Вы вожатый :) 
         '''
-    await msg.answer(ans, parse_mode=ParseMode.MARKDOWN)
+        kb = keyboards.voz_kb()
+    await msg.answer(ans, parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
 
 
 async def scoreboard(msg: types.Message):
@@ -117,7 +119,7 @@ async def reg_token(msg: types.Message):
     username = msg.from_user.id
     token = msg.text
     if database.if_user_in_users(username) and database.if_token_valid(token):
-        await msg.answer("Вы уже зарегистрированы")
+        await msg.answer("Вы уже зарегистрированы, отправьте боту сообщение \"разлогиниться\" и попробуйте снова!")
     else:
         user = ''
         if msg.from_user.first_name is not None:
@@ -132,6 +134,8 @@ async def reg_token(msg: types.Message):
                              reply_markup=main_keyboard())
             if msg.from_user.id in config.ADMINS or msg.from_user.username in config.ADMINS:
                 await msg.answer("Подтверждены полномочия администратора!")
+            if database.get_team_by_chat_id(msg.from_user.id) == 7:
+                await msg.answer("Подтвержены полномочия вожатого!", reply_markup=keyboards.voz_kb())
         else:
             await msg.answer("Токен некорректен")
 
@@ -236,6 +240,17 @@ async def get_admin_cap(msg: types.Message):
         await msg.answer("Вы не являетесь админом!")
 
 
+async def tel(msg: types.Message):
+    if database.get_team_by_chat_id(msg.from_user.id) == 7:
+        f = open('tel.md', 'r', encoding='utf-8')
+        telephones = f.read()
+        f.close()
+        await msg.answer(telephones, parse_mode=ParseMode.MARKDOWN)
+    else:
+        await msg.answer("Вы не вожатый, я все вижу :(")
+    pass
+
+
 @dp.message_handler(content_types=ContentType.TEXT)
 async def handler(msg: types.Message):
     username = msg.from_user.id
@@ -255,6 +270,8 @@ async def handler(msg: types.Message):
             await activity(msg)
         elif msg.text.lower() == 'расписание':
             await table(msg)
+        elif msg.text.lower() == 'телефоны/расселение':
+            await tel(msg)
 
 if __name__ == '__main__':
     executor.start_polling(dp)

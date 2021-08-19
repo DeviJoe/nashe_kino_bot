@@ -45,3 +45,10 @@ def echo_kb():
     e_kb.row(btn4, btn5, btn6)
     e_kb.row(btn7, btn_all, btn_cancel)
     return e_kb
+
+
+def voz_kb():
+    kb = main_keyboard()
+    tel_btn = KeyboardButton("Телефоны/расселение")
+    kb.add(tel_btn)
+    return kb

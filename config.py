@@ -1,6 +1,6 @@
 import os
 
-TOKEN = '1961254478:AAF3KO0cgDs4w16-7Xa0-APUglHQosH78tU'
+TOKEN = '1933297470:AAEpk_CpMbsX0dirY6ybuRz0Szzg6J09H8A'
 DB = os.path.abspath('db.sqlite')
 TOKEN_FILE = os.path.abspath('./token/tokens.json')
 ACTIVITIES_DIR = os.path.abspath('./activities')
